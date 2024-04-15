@@ -1,5 +1,7 @@
 <?php
 include("secret.php");
+$spojeni = mysqli_connect($server, $jmeno, $heslo, $databaze);
+
 ?>
 
 <!DOCTYPE HTML>
@@ -148,25 +150,93 @@ include("secret.php");
 
 							<a href="#" class="image featured"><img src="images/pic08.jpg" alt="" /></a>
 
-							<p>
-								<?php
-								    $spojeni = mysqli_connect($server, $jmeno, $heslo, $databaze); 
-									$dotaz = "SELECT * FROM vysledky"; 
-									$data = mysqli_query($spojeni, $dotaz); 
-									while($row = mysqli_fetch_array($data, MYSQLI_ASSOC)) 
-									{ 
-										echo "ID: ".$row['id_znamky']." Predmet: ".$row['predmet']; 
-									} 
-									mysqli_close($spojeni); 
-
-								?>
-							</p>
+							<a name="tabulkavysledkov"></a>
+							<table>
+								<thead>
+									<tr>
+										<th>Datum</th>
+										<th>Predmet</th>
+										<th>Znamka</th>
+										<th>Vyucujuci</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php
+										$dotaz = "SELECT * FROM vysledky"; 
+										$data = mysqli_query($spojeni, $dotaz); 
+										while($row = mysqli_fetch_array($data, MYSQLI_ASSOC)) 
+										{ 
+											echo 
+											"<tr> 
+												<td>".$row['datum']."</td>
+												<td>".$row['predmet']."</td>
+												<td>".$row["vysledok"]."</td>
+												<td>".$row["vyucujuci"]."</td>
+											</tr>";
+										} 									
+									?>
+								</tbody>
+							</table>
 
 						</div>
 					</section>
 					
 
-				<!-- Contact -->
+				<!-- Pridaj znamku -->
+					<section id="pridajznamku" class="four">
+						<div class="container">
+
+							<header>
+								<h2>Pridaj znamku</h2>
+							</header>
+
+							<p>Pridanie novej známky do databáze!</p>
+
+							<form method="post" action="ulozznamku.php">
+								<div class="row formznamka">
+									<div class="col-6 col-12-mobile">Dátum:<br><input type="date" name="datum" placeholder="Dátum" /></div>
+								</div>
+								<div class="row formznamka">
+									<div class="col-6 col-12-mobile">
+										<label class="formlabel" for="predmet">Predmet:</label>
+										<select name="predmet" id="predmet">
+											<option value="Predmet 1">Predmet 1</option>
+											<option value="Predmet 2">Predmet 2</option>
+											<option value="Predmet 3">Predmet 3</option>
+											<option value="Predmet 4">Predmet 4</option>
+											<option value="Predmet 5">Predmet 5</option>
+										</select>
+									</div>
+								</div>
+								<div class="row formznamka">
+									<div class="col-6 col-12-mobile">
+										<label class="formlabel" for="znamka">Znamka:</label>
+										<select name="znamka" id="znamka">
+											<option value="A">A</option>
+											<option value="B">B</option>
+											<option value="C">C</option>
+											<option value="D">D</option>
+											<option value="E">E</option>
+											<option value="Fx">Fx</option>
+										</select>
+									</div>
+								</div>
+								<div class="row formznamka">
+									<div class="col-6 col-12-mobile">Vyučujúci:<input type="text" name="vyucujuci"/></div>
+								</div>
+
+								
+								<div class="row formznamka">	
+									<div class="col-6 col-12-mobile">
+										<input type="submit" value="Ulož známku" />
+									</div>
+								</div>
+							</form>
+
+						</div>
+					</section>
+
+					<!-- Contact -->
 					<section id="contact" class="four">
 						<div class="container">
 
@@ -218,3 +288,7 @@ include("secret.php");
 
 	</body>
 </html>
+
+<?php
+mysqli_close($spojeni); 
+?>

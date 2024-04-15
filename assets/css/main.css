@@ -2630,4 +2630,16 @@ input, select, textarea {
 					margin-top: 0;
 				}
 
+
+		
+	}
+
+	/* Moje upravy */
+	.formznamka{
+		margin-top: 0px;
+		text-align: left;	
+	}
+
+	.formlabel{
+		margin-bottom: 0px!important;
 	}
