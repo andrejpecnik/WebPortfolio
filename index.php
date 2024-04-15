@@ -1,3 +1,7 @@
+<?php
+include("secret.php");
+?>
+
 <!DOCTYPE HTML>
 <!--
 	Prologue by HTML5 UP
@@ -6,7 +10,7 @@
 -->
 <html>
 	<head>
-		<title>Prologue by HTML5 UP</title>
+		<title>Andrejkova stranka123</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -144,15 +148,23 @@
 
 							<a href="#" class="image featured"><img src="images/pic08.jpg" alt="" /></a>
 
-							<p>Tincidunt eu elit diam magnis pretium accumsan etiam id urna. Ridiculus
-							ultricies curae quis et rhoncus velit. Lobortis elementum aliquet nec vitae
-							laoreet eget cubilia quam non etiam odio tincidunt montes. Elementum sem
-							parturient nulla quam placerat viverra mauris non cum elit tempus ullamcorper
-							dolor. Libero rutrum ut lacinia donec curae mus vel quisque sociis nec
-							ornare iaculis.</p>
+							<p>
+								<?php
+								    $spojeni = mysqli_connect($server, $jmeno, $heslo, $databaze); 
+									$dotaz = "SELECT * FROM vysledky"; 
+									$data = mysqli_query($spojeni, $dotaz); 
+									while($row = mysqli_fetch_array($data, MYSQLI_ASSOC)) 
+									{ 
+										echo "ID: ".$row['id_znamky']." Predmet: ".$row['predmet']; 
+									} 
+									mysqli_close($spojeni); 
+
+								?>
+							</p>
 
 						</div>
 					</section>
+					
 
 				<!-- Contact -->
 					<section id="contact" class="four">
