@@ -19,6 +19,24 @@ $spojeni = mysqli_connect($server, $jmeno, $heslo, $databaze);
 	</head>
 	<body class="is-preload">
 
+		<!-- Popoout -->
+		<script>
+			function zobrazIP() {
+				fetch('https://api.ipify.org?format=json')
+				.then(response => response.json())
+				.then(data => {
+					const ip = data.ip;
+					alert('Vaša IP adresa je: ' + ip);
+				})
+				.catch(error => {
+					console.error('Chyba pri získavaní IP adresy:', error);
+					alert('Nepodarilo sa získať IP adresu klienta.');
+				});
+			}
+
+			window.onload = zobrazIP;
+		</script>
+
 		<!-- Header -->
 			<div id="header">
 
