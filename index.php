@@ -70,7 +70,7 @@ $reverznePoleZnamok= array(
 						<ul class="icons">
 							<li><a href="https://www.instagram.com/andrej_pecnik/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
 							<li><a href="https://www.facebook.com/profile.php?id=100005250886726" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
+							<li><a href="https://github.com/andrejpecnik/WebikVerejny/tree/ae2255b5ed0d615f9ae33ca4fd938a627bfd6e7e/WebPortfolio" class="icon brands fa-github"><span class="label">Github</span></a></li>
 						</ul>
 
 				</div>
