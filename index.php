@@ -2,7 +2,27 @@
 include("secret.php");
 $spojeni = mysqli_connect($server, $jmeno, $heslo, $databaze);
 
+$poleZnamok= array(
+	"A" => 1,
+	"B" => 1.5,
+	"C" => 2,
+	"D" => 2.5,
+	"E" => 3,
+	"Fx" => 4
+  );
+
+$reverznePoleZnamok= array(
+	"1" => "A",
+	"1.5" => "B",
+	"2" => "C",
+	"2.5" => "D",
+	"3" => "E",
+	"4" => "Fx"
+  );
+
 ?>
+
+
 
 <!DOCTYPE HTML>
 <!--
@@ -19,23 +39,6 @@ $spojeni = mysqli_connect($server, $jmeno, $heslo, $databaze);
 	</head>
 	<body class="is-preload">
 
-		<!-- Popoout -->
-		<script>
-			function zobrazIP() {
-				fetch('https://api.ipify.org?format=json')
-				.then(response => response.json())
-				.then(data => {
-					const ip = data.ip;
-					alert('Vaša IP adresa je: ' + ip);
-				})
-				.catch(error => {
-					console.error('Chyba pri získavaní IP adresy:', error);
-					alert('Nepodarilo sa získať IP adresu klienta.');
-				});
-			}
-
-			window.onload = zobrazIP;
-		</script>
 
 		<!-- Header -->
 			<div id="header">
@@ -89,7 +92,7 @@ $spojeni = mysqli_connect($server, $jmeno, $heslo, $databaze);
 							</header>
 
 							<footer>
-								<a href="#portfolio" class="button scrolly">Ďalej</a>
+								<a href="#" class="button" onclick="zobrazIP()">IP Adresa</a>
 							</footer>
 
 						</div>
@@ -164,6 +167,10 @@ $spojeni = mysqli_connect($server, $jmeno, $heslo, $databaze);
 							<a class="image featured"><img src="images/znamky.jpg" alt="" /></a>
 
 							<a name="tabulkavysledkov"></a>
+
+							<h3>Tabuľka posledných 10 známok.</h3>
+
+
 							<table>
 								<thead>
 									<tr>
@@ -175,7 +182,7 @@ $spojeni = mysqli_connect($server, $jmeno, $heslo, $databaze);
 								</thead>
 								<tbody>
 									<?php
-										$dotaz = "SELECT * FROM vysledky"; 
+										$dotaz = "SELECT * FROM vysledky ORDER BY id_znamky desc LIMIT 10;"; 
 										$data = mysqli_query($spojeni, $dotaz); 
 										while($row = mysqli_fetch_array($data, MYSQLI_ASSOC)) 
 										{ 
@@ -190,9 +197,103 @@ $spojeni = mysqli_connect($server, $jmeno, $heslo, $databaze);
 									?>
 								</tbody>
 							</table>
+							
+							<h3>Priemer podľa predmetu.</h3>					
+							
+							<table>
+								<thead>
+									<tr>
+										<th>Názov predmetu</th>
+										<th>Priemer</th>
+										<th>Najlepšia</th>
+										<th>Najhoršia</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php
+										for ($x = 1; $x <= 5; $x++) {
+																					  
+											$nazovPredmetu = "Predmet ".$x;
+											$dotaz = "SELECT * FROM vysledky WHERE predmet='".$nazovPredmetu."';"; 
+											$data = mysqli_query($spojeni, $dotaz); 
+											$pocetZnamok = 0;
+											$sucetZnamok = 0;
+											$minimum = 4;
+											$maximum = 1;
+											while($row = mysqli_fetch_array($data, MYSQLI_ASSOC)) 
+											{ 
+												$pocetZnamok += 1;
+												$sucetZnamok += $poleZnamok[$row["vysledok"]];
+												if($poleZnamok[$row["vysledok"]] <= $minimum){
+													$minimum = $poleZnamok[$row["vysledok"]];
+												}
+												if($poleZnamok[$row["vysledok"]] >= $maximum){
+													$maximum = $poleZnamok[$row["vysledok"]];
+												}
+											}
+											$priemer = $sucetZnamok/$pocetZnamok;
+											echo 
+												"<tr> 
+													<td>".$nazovPredmetu."</td>
+													<td>".round($priemer,2)."</td>
+													<td>".$reverznePoleZnamok["$minimum"]."</td>
+													<td>".$reverznePoleZnamok["$maximum"]."</td>
+												</tr>";
+										}		
+									?>
+								</tbody>
+							</table>
+
+
+							<?php
+									
+								$dotaz = "SELECT * FROM vysledky;"; 
+								$data = mysqli_query($spojeni, $dotaz); 
+								$pocetZnamok = 0;
+								$sucetZnamok = 0;
+								while($row = mysqli_fetch_array($data, MYSQLI_ASSOC)) 
+								{ 
+									$pocetZnamok += 1;
+									$sucetZnamok += $poleZnamok[$row["vysledok"]];
+								}
+								$celkovyPriemer = $sucetZnamok/$pocetZnamok;
+											
+							?>
+							<h3>Celkový študíjný priemer.</h3>
+							<p>Celkový študíjný priemer je <b><?php echo round($celkovyPriemer, 2); ?></b></p>
+							
+							<?php
+								$mesacnyPriemer = array();
+								for ($x = 1; $x <= 12; $x++) {
+									$dotaz = "SELECT * FROM vysledky WHERE YEAR(datum) = 2023 AND MONTH(datum) = $x;"; 
+									$data = mysqli_query($spojeni, $dotaz); 
+									$pocetZnamok = 0;
+									$sucetZnamok = 0;
+									while($row = mysqli_fetch_array($data, MYSQLI_ASSOC)) 
+									{ 
+										$pocetZnamok += 1;
+										$sucetZnamok += $poleZnamok[$row["vysledok"]];
+									}
+									if($pocetZnamok ==0){
+										$celkovyPriemer = 0;
+									}else{
+										$celkovyPriemer = $sucetZnamok/$pocetZnamok;
+									}
+									$mesacnyPriemer[$x] = $celkovyPriemer;
+								}		
+							?>
+
+							<h3>Vývoj priemeru v čase</h3>
+							<div>
+  								<canvas id="myChart"></canvas>
+							</div>
+
+
+
 
 						</div>
 					</section>
+
 					
 
 				<!-- Pridaj znamku -->
@@ -270,7 +371,47 @@ $spojeni = mysqli_connect($server, $jmeno, $heslo, $databaze);
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+			<script>
+				const ctx = document.getElementById('myChart');
 
+				new Chart(ctx, {
+					type: 'line',
+					data: {
+					labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+					datasets: [{
+						label: 'Priemer',
+						data: [<?php echo implode(',',  $mesacnyPriemer ) ?>],
+						borderWidth: 1
+					}]
+					},
+					options: {
+					scales: {
+						y: {
+						beginAtZero: true
+						}
+					}
+					}
+				});
+			</script>
+			
+			<!-- Popoout -->
+			
+			<script>
+				function zobrazIP() {
+					fetch('https://api.ipify.org?format=json')
+					.then(response => response.json())
+					.then(data => {
+						const ip = data.ip;
+						alert('Vaša IP adresa je: ' + ip);
+					})
+					.catch(error => {
+						console.error('Chyba pri získavaní IP adresy:', error);
+						alert('Nepodarilo sa získať IP adresu klienta.');
+					});
+				}
+
+			</script>					
 	</body>
 </html>
 
