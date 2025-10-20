@@ -1,2 +1,30 @@
-.vscode
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editors / IDE
+.vscode/
+.idea/
+
+# PHP / Composer (ak by si časom pridal)
+vendor/
+composer.lock
+
+# Node / tooling (ak použiješ build nástroje)
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Sass / CSS maps
+.sass-cache/
+*.map
+
+# Env / secrets
+.env
+.env.*
 secret.php
+
+# Logy / cache
+*.log
+cache/
